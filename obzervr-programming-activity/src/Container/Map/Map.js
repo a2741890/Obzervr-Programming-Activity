@@ -8,100 +8,50 @@ class Map extends Component {
 
   state = {
     map: null,
-    allMarkers: [],
-    markers: [],
+    clusters: [],
     mapChanged: false,
-    isClusterClick: false
+    error: false
   }
 
-  componentDidMount() {
-    console.log('DidMount called');
-    // customAxios.get('/getdata', {
-    //   params:{
-    //     boundry: 'test'
-    //   }
-    // })
-    //   .then(res => {
-    //     const updatedAllMarkers = [];
-    //     console.log(res.data);
-    //     for (let key in res.data) {
-    //       const latlng = new LatLng(res.data[key].lat, res.data[key].lng);
-    //       updatedAllMarkers.push(latlng);
-    //     }
-        
-    //     this.displayMarkers(this.state.map, updatedAllMarkers);
-    //     this.setState({ allMarkers: updatedAllMarkers });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   })
-  }
-
-  componentDidUpdate(prevProps, prevState){
-    console.log('DidUpdate called!');
+  componentDidUpdate(){
+    console.log('DidUpdate called');
     if(this.state.mapChanged){
-      // this.displayMarkers(this.state.map, this.state.allMarkers);
-
       customAxios.get('/getdata', {
         params:{
-          bounds: this.state.map.getBounds()
+          bounds: this.state.map.getBounds(),
+          zoomLevel: this.state.map.getZoom()
         }
       })
         .then(res => {
-          const updatedAllMarkers = [];
-          console.log(res.data);
-          for (let key in res.data) {
-            const latlng = new LatLng(res.data[key].lat, res.data[key].lng);
-            updatedAllMarkers.push(latlng);
-          }
-          
-          // this.displayMarkers(this.state.map, updatedAllMarkers);
-          this.setState({ allMarkers: updatedAllMarkers, mapChanged: false });
+          console.log(res);
+          this.setState({ clusters: res.data.clusters, mapChanged: false });
         })
         .catch(err => {
-          console.log(err);
+          this.setState({error: true});
         })
     }
-  }
-
-  displayMarkers(map, allMarkers) {
-    console.log('Display markers called');
-    const markers = allMarkers.filter(m => 
-      map.getBounds().contains(m)
-      );
-      //console.log(`Render ${markers.length} points`);
-      this.setState({markers: markers, mapChanged: false});
   }
 
   onMapLoad = (event) => {
     const updatedMap = event.target;
     console.log('Load map!');
-    console.log(updatedMap.getBounds());
     this.setState({map: updatedMap, mapChanged:true});
   }
 
-  clusterClick = (cluster) => {
-    this.setState({isClusterClick: true});
-  }
-
-  // onViewportChange = (event) => {
-  //   this.setState({mapMoved:true});
-  // }
 
   onMoveEnd = (event) => {
-    console.log(event.target);
-    this.setState({map: event.target ,mapChanged:true});
+    const updatedMap = event.target;
+    console.log('On Move End Called');
+    this.setState({map: updatedMap, mapChanged:true});
   }
 
   render() {
     return (
-      <LeafletMap
-        markers={this.state.allMarkers}
-        clusterClick={cluster => this.clusterClick(cluster)}
+      !this.state.error ? <LeafletMap
+        clusters={this.state.clusters}
+        zoomLevel={this.state.zoomLevel}
         onMapLoad={event => this.onMapLoad(event)}
-        // onViewportChange={event => this.onViewportChange(event)}
-        onMoveEnd={event => this.onMoveEnd(event)} 
-        />
+        onMoveEnd={event => this.onMoveEnd(event)} /> : <span style={{color:'red'}}>Network Error</span>
     )
   }
 }

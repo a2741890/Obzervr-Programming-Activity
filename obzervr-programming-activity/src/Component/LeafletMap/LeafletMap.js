@@ -1,19 +1,27 @@
 import 'leaflet/dist/leaflet.css';
 import React from 'react';
 import { Map, TileLayer } from 'react-leaflet';
-import MarkerClusterGroup from "react-leaflet-markercluster";
 import 'react-leaflet-markercluster/dist/styles.min.css';
-import CircleMarkers from '../CircleＭarkers/CircleMarkers';
+import Cluster from '../Clusters/Cluster';
 import './LeafletMap.css';
 
 const leafletMap = (props) => {
 
-  const { markers, onMapLoad, onMoveEnd, clusterClick } = props;
+  const { clusters, onMapLoad, onMoveEnd, zoomLevel } = props;
   const mapPositions = [40.7501106262207, -73.993896484375];
 
-
+  const clusterGroup = clusters.map((c, index) => {
+    return (
+      <Cluster
+        data-testid="Cluster"
+        key={c.id + '-' + index}
+        latLng={c.geometry.coordinates}
+        properties={c.properties} />
+    )
+  });
   return (
     <Map
+      data-testid="mainMap"
       className="map"
       preferCanvas={true}
       center={[mapPositions[0], mapPositions[1]]}
@@ -22,16 +30,10 @@ const leafletMap = (props) => {
       onMoveEnd={onMoveEnd}
     >
       <TileLayer
-        url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
+        url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
         attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
       />
-      <MarkerClusterGroup 
-        disableClusteringAtZoom={50}
-        chunkedLoading={true}
-        onClick={cluster => clusterClick(cluster)}
-      >
-        <CircleMarkers markers={markers}/>
-      </MarkerClusterGroup>
+      {clusterGroup}
     </Map>
   )
 }
