@@ -7,7 +7,7 @@ import './LeafletMap.css';
 
 const leafletMap = (props) => {
 
-  const { clusters, onMapLoad, onMoveEnd, zoomLevel } = props;
+  const { clusters, onMapLoad, onMoveEnd } = props;
   const mapPositions = [40.7501106262207, -73.993896484375];
 
   const clusterGroup = clusters.map((c, index) => {

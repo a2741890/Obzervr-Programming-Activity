@@ -1,5 +1,5 @@
 import React from 'react';
-import { Marker } from 'react-leaflet';
+import { Marker, CircleMarker } from 'react-leaflet';
 import { divIcon } from 'leaflet';
 import L from 'leaflet';
 import './Cluster.css';
@@ -14,11 +14,18 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const clusters = (props) => {
 
-  const { latLng, properties, clusterClicked, zoomLevel } = props;
+  const { latLng, properties, clusterClicked } = props;
 
   const position = L.latLng(latLng[1], latLng[0]);
 
-  if (!properties.cluster) return <Marker data-testid="defaultMarker" position={position} />;
+  if (!properties.cluster) {
+    return (
+      <CircleMarker
+        data-testid="defaultMarker"
+        center={position}
+        radius={1} />
+    );
+  }
 
   const count = properties.point_count;
   const size =
