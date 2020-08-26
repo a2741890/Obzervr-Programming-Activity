@@ -13,11 +13,11 @@ class Map extends Component {
     error: false
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     console.log('DidUpdate called');
-    if(this.state.mapChanged){
+    if (this.state.mapChanged) {
       customAxios.get('/getdata', {
-        params:{
+        params: {
           bounds: this.state.map.getBounds(),
           zoomLevel: this.state.map.getZoom()
         }
@@ -27,7 +27,7 @@ class Map extends Component {
           this.setState({ clusters: res.data.clusters, mapChanged: false });
         })
         .catch(err => {
-          this.setState({error: true});
+          this.setState({ error: true });
         })
     }
   }
@@ -35,14 +35,14 @@ class Map extends Component {
   onMapLoad = (event) => {
     const updatedMap = event.target;
     console.log('Load map!');
-    this.setState({map: updatedMap, mapChanged:true});
+    this.setState({ map: updatedMap, mapChanged: true });
   }
 
 
   onMoveEnd = (event) => {
     const updatedMap = event.target;
     console.log('On Move End Called');
-    this.setState({map: updatedMap, mapChanged:true});
+    this.setState({ map: updatedMap, mapChanged: true });
   }
 
   render() {
@@ -51,7 +51,7 @@ class Map extends Component {
         clusters={this.state.clusters}
         zoomLevel={this.state.zoomLevel}
         onMapLoad={event => this.onMapLoad(event)}
-        onMoveEnd={event => this.onMoveEnd(event)} /> : <span style={{color:'red'}}>Network Error</span>
+        onMoveEnd={event => this.onMoveEnd(event)} /> : <span style={{ color: 'red' }}>Network Error</span>
     )
   }
 }

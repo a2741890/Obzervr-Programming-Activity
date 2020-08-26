@@ -1,68 +1,28 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Obzervr-Programming-Backend
+New York City has publicly released Taxi trip data for every trip from every taxi from 2014 to 2018. The web application shows the dataset of the pick-up locations on the map in New York City during January, 2015. When zooming down to an individual point, it will be displayed as a blue circle marker. On the other hand, zooming out will show clusters representing points in the specific area.
 
-## Available Scripts
+###### Data structure in use:  
+<img src="https://github.com/a2741890/Obzervr-Programming-Backend/blob/master/dataStructure.PNG" height="140" width="260">  
 
-In the project directory, you can run:
+###### Map:  
+<img src="https://raw.githubusercontent.com/a2741890/Obzervr-Programming-Backend/master/map-middle.PNG" height="240" width="480">
+<img src="https://raw.githubusercontent.com/a2741890/Obzervr-Programming-Backend/master/map-close.PNG" height="240" width="480">
+<img src="https://raw.githubusercontent.com/a2741890/Obzervr-Programming-Backend/master/map-far.PNG" height="240" width="480">
 
-### `npm start`
+  
+  
+## Technical Decision  
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+1. Clean dataset by removing invalid points and points outside New York City - *Python*  
+[Ref: New York City Bourough Boundry](https://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/nybb_metadata.pdf?ver=18c&fbclid=IwAR2mrijF5FkVlWSs_l8-HboUGaB5V9pFikgj0C6LObR-n1MaqM1WjTdgpPY)
+2. Create 1 database including 2 collections - *MongoDB*  
+ One includes more details(i.e fields) and the other only contains id and the array of longitude and latitude of the pick-up location.  
+ First collection will provide more details.  
+ The second one could provide a faster database query when we only need to show pick-up locations on the map without further details. 
+<img src="https://raw.githubusercontent.com/a2741890/Obzervr-Programming-Backend/master/data2Columns.PNG" height="100" width="280">  
+3. RESTful API - *Node.js & Express.js*  
+ Query and retrieve location information within the current view scale from database based on request params from client-side. (Not downloading all data for client-side)    
+ Cluster these locations and send to the cliend-side.(Show clusters to reduce the size of the response and the pressure of the client-side render)  
+ 
+ ## Future  
+ The dataset contains 12.5 millions records and leads to the slow query (5-10 seconds for maximum scale) when the map requests for more data rendering at the client-side. (zoom out) Indexing and redesigning the data structure in the database can not help achieve a better performance. A database shard may be required to spread the data to different server to increase efficiency of the database query.  
